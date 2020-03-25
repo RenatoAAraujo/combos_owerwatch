@@ -1,21 +1,42 @@
-import json
+from bs4 import BeautifulSoup
+
+import re
 import requests
 
 
 class Heroes:
 
     def __init__(self):
-        self.heroes_brute_data = None
+        self.base_url = "https://overwatch.guide/"
+        self._raw_hero_data = self._hero_data()
+        self.heroes = self.available_heroes()
 
-    def __heroes_brute_data(self):
-        endpoint = "https://best-overwatch-api.herokuapp.com/heroes"
+    def _page_data(self):
         try:
-            heroes_data = json.loads(requests.get(endpoint).content.decode("utf-8"))
-            self.heroes_brute_data = heroes_data
+            raw_page_data = requests.get(self.base_url).content
+            soup = BeautifulSoup(raw_page_data, "html.parser")
         except Exception as e:
-            print("Could not get hero data from \"" + endpoint + "\"\nError: " + str(e))
+            print("Error while obtaining hero information.\nError:\t" + str(e))
 
-    def heroes(self):
-        self.__heroes_brute_data()
+        return soup
 
-        return self.heroes_brute_data
+    def _hero_data(self):
+
+        return self._page_data().find_all(class_="sub-menu")[0]
+
+    def hero_pages(self):
+        soup = self._raw_hero_data()
+        hero_pages = {}
+
+        for li in soup.find_all("li"):
+            li.get("href")
+            if li.text != "ALL HEROES":
+                hero_pages.update(
+                    {li.text: re.search("https://.*(?=\")", str(li)).group()}
+                )
+
+        return hero_pages
+
+    def available_heroes(self):
+
+        return list(self.hero_pages().keys())
