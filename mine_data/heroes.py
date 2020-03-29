@@ -1,15 +1,16 @@
 from bs4 import BeautifulSoup
 
-import re
 import requests
+
+HERO_TABLE_INDEXES = [2, 3, 5, 6, 7, 10, 11]
 
 
 class Heroes:
 
     def __init__(self):
-        self.base_url = "https://overwatch.guide/"
-        self._raw_hero_data = self._hero_data()
-        self.heroes = self.available_heroes()
+        self.base_url = "https://overwatch.fandom.com/wiki/Heroes"
+        self.filtered_raw_data = None
+        self.extract_data()
 
     def _page_data(self):
         try:
@@ -21,22 +22,30 @@ class Heroes:
         return soup
 
     def _hero_data(self):
+        hero_names = list()
+        for t in self.filtered_raw_data:
+            for h in t.text.split("\n"):
+                if h != "":
+                    hero_names.append(h)
+        hero_names.sort()
+        self.hero_names = hero_names
 
-        return self._page_data().find_all(class_="sub-menu")[0]
-
-    def hero_pages(self):
-        soup = self._raw_hero_data()
+    def _hero_pages(self):
         hero_pages = {}
+        for h in self.hero_names:
+            hero_url = self.base_url.replace("Heroes", h).replace(" ", "_")
+            hero_pages.update({h: hero_url})
+        self.hero_pages = hero_pages
 
-        for li in soup.find_all("li"):
-            li.get("href")
-            if li.text != "ALL HEROES":
-                hero_pages.update(
-                    {li.text: re.search("https://.*(?=\")", str(li)).group()}
-                )
+    def extract_data(self):
+        raw_data = self._page_data().find_all("table")
 
-        return hero_pages
+        filtered_data = list()
+        for i in range(len(raw_data)):
+            if i in HERO_TABLE_INDEXES:
+                filtered_data.append(raw_data[i])
+        self.filtered_raw_data = filtered_data
 
-    def available_heroes(self):
+        self._hero_data()
+        self._hero_pages()
 
-        return list(self.hero_pages().keys())
