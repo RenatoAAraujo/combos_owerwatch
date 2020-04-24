@@ -49,4 +49,3 @@ class Heroes:
         self._hero_data()
         self._hero_pages()
 
-pass
