@@ -1,15 +1,14 @@
 from django.core.management import call_command
+import os
 
-print("##### Migrate #####")
-call_command("migrate")
-call_command("makemigrations")
 
-print("##### Create Tables #####")
-# call_command("sqlmigrate", "")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 
-print("##### Load Initial Data #####")
-call_command("loaddata", "initial_data.json")
+def migrate():
+    print("##### Migrate #####")
+    call_command("makemigrations")
+    call_command("migrate")
 
-print("##### Synchroninsing Database #####")
-call_command("syncdb")
-call_command("loaddata", "initial_data.json")
+
+if __name__ == "__main__":
+    migrate()
