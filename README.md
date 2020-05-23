@@ -8,11 +8,11 @@ Experiment with possible combinations of team roasters, including hero abilities
 * In the project's root run ```pip3 install -r ./requirements.txt```
 
 ###Django
-Create django-admin superuser by editing and running ```python3 django_site/super_user.py```
+Create django-admin superuser by editing and running ```python3 super_user.py```
 
 ###Deploy
 ```
-python3 django_site/manage.py makemigrations
-python3 django_site/manage.py migrate
-python3 django_site/manage.py runserver 8000
+python3 manage.py makemigrations
+python3 manage.py migrate
+python3 manage.py runserver 8000
 ```
