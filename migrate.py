@@ -1,7 +1,7 @@
 from django.core.management import call_command
 import os
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "_ow_combos.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ow_combos.settings")
 
 
 def migrate():
