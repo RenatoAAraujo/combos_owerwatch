@@ -3,7 +3,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ow_combos.settings")
 import django
 django.setup()
 from django.contrib.auth.models import User
-from sys.client_arguments import get_cli_args
+from system.client import get_cli_args
 variables = get_cli_args()
 
 if not all(["username", "password"] in list(variables.keys())):
